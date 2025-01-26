@@ -44,7 +44,7 @@ const ZipForm = () => {
   };
 
   return (
-    <>
+    <div id="form-results-container">
       <form onSubmit={handleSubmit} id="zip-form">
         <label className="labels">Enter Your Zip Code</label>
         <div className="input-container">
@@ -56,6 +56,7 @@ const ZipForm = () => {
             onChange={(e) => {
               setZip(e.target.value);
               setError(null);
+              setWeatherData(null);
             }}
           ></input>
           <button id="submit-btn" type="submit">
@@ -63,9 +64,9 @@ const ZipForm = () => {
           </button>
         </div>
       </form>
-      {weatherData && <ZipResults weatherData={weatherData} />}
       {error && <p className="error">{error}</p>}
-    </>
+      {weatherData && <ZipResults weatherData={weatherData} />}
+    </div>
   );
 };
 
