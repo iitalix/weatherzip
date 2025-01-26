@@ -1,0 +1,27 @@
+# Node.js (Frontend)
+node_modules
+package-lock.json
+yarn.lock
+
+# Environment Files
+.env
+*.env
+
+# Python (Backend)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+
+# Logs
+*.log
+
+# IDE/Editor Configurations
+.vscode/
+.idea/
+*.swp
+
+# System Files
+.DS_Store
+Thumbs.db
