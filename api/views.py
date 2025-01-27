@@ -1,5 +1,6 @@
 import requests
 from decouple import config
+from django.core.cache import cache
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +19,14 @@ class GetZipWeather(APIView):
 
         # If the serializer is valid, we can access the validated data
         zipcode = serializer.validated_data["zipcode"]
+
+        # Check if the data is already cached
+        cache_key = f"weather_{zipcode}"
+        cached_data = cache.get(cache_key)
+
+        if cached_data:
+            print("Returning cached data")
+            return Response(cached_data, status=status.HTTP_200_OK)
 
         try:
             response = requests.get(
@@ -43,9 +52,15 @@ class GetZipWeather(APIView):
                     "mintemp_f": forecast.get("day", {}).get("mintemp_f"),
                 }
 
-                print(
-                    "Weather Summary:", weather_summary
-                )  # Print the processed weather summary
+                # Cache weather summary for 1 hour (3600 seconds)
+                cache.set(cache_key, weather_summary, timeout=3600)
+
+                # Print the processed weather summary
+                # print(
+                #     "Weather Summary:", weather_summary
+                # )
+
+                print("Returning new data and caching it")
                 return Response(weather_summary, status=status.HTTP_200_OK)
 
             else:
