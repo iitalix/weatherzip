@@ -64,8 +64,10 @@ const ZipForm = () => {
           </button>
         </div>
       </form>
-      {error && <p className="error">{error}</p>}
-      {weatherData && <ZipResults weatherData={weatherData} />}
+      <div id="results-container">
+        {error && <p className="error">{error}</p>}
+        {weatherData && <ZipResults weatherData={weatherData} />}
+      </div>
     </div>
   );
 };

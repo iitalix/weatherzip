@@ -78,6 +78,7 @@ WEATHER_API_KEY=your_actual_api_key_here
 Run the Django server:
 
 ```bash
+source venv/bin/activate
 python manage.py runserver
 ```
 
@@ -98,7 +99,7 @@ npm install
 Start the development server:
 
 ```bash
-npm start
+npm run dev
 ```
 
 ### **4. Access the Application**
@@ -106,13 +107,13 @@ npm start
 Open your browser and visit:
 
 ```arduino
-http://localhost:3000
+http://localhost:5173
 ```
 
 The React frontend communicates with the Django backend running at:
 
 ```arduino
-http://127.0.0.1:8000
+http://127.0.0.1:8000/api/zip-weather/
 ```
 
 ## Project Structure
