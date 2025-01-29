@@ -13,10 +13,10 @@ class WeatherZipTests(TestCase):
         """Test that only valid ZIP codes pass validation"""
         from api.serializers import ZipSerializer
 
-        serializer = ZipSerializer(data={"zipcode": self.valid_zip})  # ✅ FIXED
+        serializer = ZipSerializer(data={"zipcode": self.valid_zip})
         self.assertTrue(serializer.is_valid())
 
-        serializer = ZipSerializer(data={"zipcode": self.invalid_zip})  # ✅ FIXED
+        serializer = ZipSerializer(data={"zipcode": self.invalid_zip})
         self.assertFalse(serializer.is_valid())
 
     def test_api_response_for_valid_zip(self):
