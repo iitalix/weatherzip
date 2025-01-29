@@ -16,19 +16,21 @@ const ZipForm = () => {
     }
 
     try {
-      const res = await axios.post('http://127.0.0.1:8000/api/zip-weather/', {
-        zipcode: zip,
-      });
+      const res = await axios.get(
+        `http://127.0.0.1:8000/api/zip-weather/${zip}/`
+      );
       setWeatherData(res.data);
       setError(null);
     } catch (err) {
       if (err.response) {
-        // Handle validation errors from the serializer
+        // Handle errors from the backend
         const backendErrors = err.response.data;
+
         const errorMessage =
-          backendErrors.zipcode?.[0] || // First validation error for the "zipcode" field
-          backendErrors.non_field_errors?.[0] || // General validation errors
-          'An error occurred. Please try again.';
+          backendErrors.zipcode?.[0] || // Serializer validation errors
+          backendErrors.error || // General errors (e.g., WeatherAPI)
+          backendErrors.details?.error?.message || // Specific WeatherAPI errors
+          'An error occurred. Please try again.'; // Fallback
 
         setError(errorMessage);
       } else if (err.request) {
@@ -36,7 +38,9 @@ const ZipForm = () => {
         setError('Unable to reach the server. Please try again later.');
       } else {
         // Other unexpected errors
-        setError('An unexpected error occurred.');
+        setError(
+          'An unexpected error occurred. Please try again or contact support.'
+        );
       }
 
       setWeatherData(null); // Clear weather data on error

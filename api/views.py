@@ -9,19 +9,18 @@ from .serializers import ZipSerializer
 
 
 class GetZipWeather(APIView):
-    def post(self, request):
-        serializer = ZipSerializer(data=request.data)
+    def get(self, request, zip_code):
         WEATHER_API_URL = "http://api.weatherapi.com/v1/forecast.json"
         API_KEY = config("SECRET_KEY")
+
+        # Use the serializer to validate the ZIP code
+        serializer = ZipSerializer(data={"zipcode": zip_code})
 
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # If the serializer is valid, we can access the validated data
-        zipcode = serializer.validated_data["zipcode"]
-
         # Check if the data is already cached
-        cache_key = f"weather_{zipcode}"
+        cache_key = f"weather_{zip_code}"
         cached_data = cache.get(cache_key)
 
         if cached_data:
@@ -29,17 +28,15 @@ class GetZipWeather(APIView):
             return Response(cached_data, status=status.HTTP_200_OK)
 
         try:
+            # Fetch weather data from the WeatherAPI
             response = requests.get(
                 WEATHER_API_URL,
                 params={
                     "key": API_KEY,
-                    "q": zipcode,
+                    "q": zip_code,
                     "days": 1,  # Include forecast for one day
                 },
             )
-
-            # Print full API response
-            # print("WeatherAPI Response:", response.json())
 
             if response.status_code == 200:
                 weather_data = response.json()
@@ -55,18 +52,13 @@ class GetZipWeather(APIView):
                 # Cache weather summary for 1 hour (3600 seconds)
                 cache.set(cache_key, weather_summary, timeout=3600)
 
-                # Print the processed weather summary
-                # print(
-                #     "Weather Summary:", weather_summary
-                # )
-
                 print("Returning new data and caching it")
                 return Response(weather_summary, status=status.HTTP_200_OK)
 
             else:
                 return Response(
                     {
-                        "error": "Failed to fetch weather data.",
+                        "error": "Failed to fetch weather data. Please ensure the ZIP code is valid.",
                         "details": response.json(),
                     },
                     status=status.HTTP_400_BAD_REQUEST,
@@ -75,7 +67,7 @@ class GetZipWeather(APIView):
         except requests.exceptions.RequestException as e:
             return Response(
                 {
-                    "error": "An error occurred while fetching weather data.",
+                    "error": "Something went wrong on our end. Please try again later or contact support.",
                     "details": str(e),
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
