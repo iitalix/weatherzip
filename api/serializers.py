@@ -34,3 +34,6 @@ class ZipSerializer(serializers.Serializer):
         if len(value) != 5:
             raise serializers.ValidationError("ZIP code must be exactly 5 digits long.")
         return value
+
+
+__all__ = ["ZipSerializer"]
