@@ -26,11 +26,9 @@ from rest_framework import serializers
 
 
 class ZipSerializer(serializers.Serializer):
-    zipcode = serializers.CharField(max_length=5)
+    zipcode = serializers.CharField(min_length=5, max_length=5)
 
     def validate_zipcode(self, value):
         if not value.isdigit():
             raise serializers.ValidationError("ZIP code must contain only digits.")
-        if len(value) != 5:
-            raise serializers.ValidationError("ZIP code must be exactly 5 digits long.")
         return value
